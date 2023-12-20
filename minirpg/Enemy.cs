@@ -2,22 +2,33 @@
 
 namespace minirpg
 {
-    internal class Enemy : Person
+    public class Enemy : Person
     {
         public Enemy(int level)
         {
             _lvl = level;
-            _hp = Game.rnd.Next((_lvl - 1) * 10, (_lvl + 1) * 10);
-            _atk = Game.rnd.Next(_lvl * 10, (_lvl + 1) * 10);
+            Hp = Atk = 0;
+            while (Hp == 0 || Atk == 0)
+            {
+                Hp = Game.rnd.Next((_lvl - 1) * 100, (_lvl + 1) * 100);
+                Atk = Game.rnd.Next(_lvl * 10, (_lvl + 1) * 20);
+            }
+            int random = Game.rnd.Next(1, 100);
+            if (random >= 50)
+            {
+                if (random <= 80) Equip.Armor = new Item() { Def = 10, Dq = 10 };
+                else if (random <= 95) Equip.Armor = new Item() { Def = 25, Dq = 25 };
+                else Equip.Armor = new Item() {  Def = 50, Dq = 45 };
+            }
         }
 
-        public int GetWinChance(Player player)
+        public byte GetWinChance(Player player)
         {
-            int chance1 = (int)(50 - (_atk - player.Hp) * 2.63);
-            int chance2 = (int)(50 - (_hp - player.Atk) * 2.63);
+            byte chance1 = (byte)(50 - (Atk - player.Hp) * 2.63);
+            byte chance2 = (byte)(50 - (Hp - player.Atk) * 2.63);
 
-            int chance = (chance1 + chance2) / 2;
-            return chance < 90 ? chance + 10 : chance;
+            byte chance = (byte)((chance1 + chance2) / 2);
+            return (byte)(chance < 90 ? chance + 10 : chance);
         }
     }
 }

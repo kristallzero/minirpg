@@ -2,22 +2,15 @@
 
 namespace minirpg
 {
-    public struct PersonData
-    {
-        public int lvl;
-        public int hp;
-        public int atk;
-    }
-    internal class Person
+    public class Person
     {
         protected int _lvl;
-        protected int _hp;
-        protected int _atk;
+        public int Hp;
+        public int Atk;
 
         public int Lvl => _lvl;
-        public int Hp => _hp;
-        public int Atk => _atk;
 
+        public Equipment Equip = new();
         public void LevelUp()
         {
             _lvl++;

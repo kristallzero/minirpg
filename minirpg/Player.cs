@@ -1,55 +1,47 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace minirpg
 {
-
-    internal class Player : Person
+    public class Player : Person
     {
+        public List<Item> Inventory;
+
+        public int Gold;
+
         public Player()
         {
             _lvl = 1;
-            _hp = 10;
-            _atk = 10;
+            Hp = 125;
+            Atk = 30;
+            Inventory = new();
+            Gold = 0;
         }
 
-
-        public bool Attack(Enemy enemy)
+        public void UpdateEquip(int inventoryIndex)
         {
-            int chance = enemy.GetWinChance(this);
+            Item item = Inventory[inventoryIndex];
+            Item? previousItem = null;
 
-            if (chance > Game.rnd.Next(0, 100))
+            switch (item.Type)
             {
-                int prevHp = _hp;
-                if (_hp < _lvl * 10) _hp = _lvl * 10;
-                else if (_hp < enemy.Hp) _hp = enemy.Hp;
-                else _hp += 1;
-                
-                if (_hp > (_lvl + 1) * 10) _hp = (_lvl + 1) * 10;
-
-                int changeHp = _hp - prevHp;
-                string hpChange = (changeHp > 0 ? "+" : "") + changeHp.ToString();
-
-                int prevAtk = _atk;
-                if (_atk < enemy.Atk) _atk = enemy.Atk;
-                else _atk += 1;
-                if (_atk > (_lvl + 1) * 10) _atk = (_lvl + 1) * 10;
-
-                int changeAtk = _atk - prevAtk;
-                string atkChange = (changeAtk > 0 ? "+" : "") + changeAtk.ToString();
-
-                Console.WriteLine($"Победа! Здоровье: {_hp}({hpChange}), атака: {_atk}({atkChange})");
-                return true;
+                case ItemType.Weapon:
+                    previousItem = Equip.Weapon;
+                    Equip.Weapon = item;
+                    break;
+                case ItemType.Armor:
+                    previousItem = Equip.Armor;
+                    Equip.Armor = item;
+                    break;
+                case ItemType.Accessory:
+                    previousItem = Equip.Accessory;
+                    Equip.Accessory = item;
+                    break;
             }
-            else
-            {
-                int changeHp = enemy.Atk / 3;
-                _hp = _hp - changeHp;
-
-                Console.WriteLine($"Вы проиграли! ваше здоровье: {_hp}({-changeHp})");
-                return _hp > 0;
-            }
+            if (previousItem != null)
+                Inventory.Add((Item)previousItem);
+            Inventory.Remove(item);
         }
-
     }
 
 }
