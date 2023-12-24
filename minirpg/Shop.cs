@@ -44,14 +44,14 @@ namespace minirpg
             return true;
         }
 
-        public static List<Item> items = new()
+        public static readonly List<Item> items = new()
         {
             new Item()
             {
                 Type = ItemType.Weapon,
                 Size = ItemSize.M,
                 Name = "Серебряный меч",
-                Cost = 5,
+                Cost = 10,
                 Atk = 10
             },
             new Item()
@@ -59,7 +59,7 @@ namespace minirpg
                 Type = ItemType.Armor,
                 Size = ItemSize.M,
                 Name = "Серебряные доспехи",
-                Cost = 5,
+                Cost = 10,
                 Def = 10,
                 Dq = 10
             },
@@ -69,7 +69,7 @@ namespace minirpg
                 Type = ItemType.Accessory,
                 Size = ItemSize.S,
                 Name = "Серебряный амулет",
-                Cost = 5,
+                Cost = 10,
                 Hp = 25
             },
             new Item()
@@ -77,7 +77,7 @@ namespace minirpg
                 Type = ItemType.Weapon,
                 Size = ItemSize.M,
                 Name = "Закаленный меч",
-                Cost = 15,
+                Cost = 20,
                 Atk = 25
             },
             new Item()
@@ -85,7 +85,7 @@ namespace minirpg
                 Type = ItemType.Armor,
                 Size = ItemSize.M,
                 Name = "Закаленные доспехи",
-                Cost = 15,
+                Cost = 20,
                 Def = 25,
                 Dq = 25
             },
@@ -94,7 +94,7 @@ namespace minirpg
                 Type = ItemType.Accessory,
                 Size = ItemSize.S,
                 Name = "Золотой амулет",
-                Cost = 15,
+                Cost = 20,
                 Hp = 50
             },
             new Item()
@@ -102,7 +102,7 @@ namespace minirpg
                 Type = ItemType.Weapon,
                 Size = ItemSize.L,
                 Name = "Тяжелый меч",
-                Cost = 30,
+                Cost = 50,
                 Atk = 50
             },
             new Item()
@@ -110,7 +110,7 @@ namespace minirpg
                 Type = ItemType.Armor,
                 Size = ItemSize.L,
                 Name = "Тяжелые доспехи",
-                Cost = 30,
+                Cost = 50,
                 Def = 50,
                 Dq = 40
             },
@@ -119,7 +119,7 @@ namespace minirpg
                 Type = ItemType.Accessory,
                 Size = ItemSize.M,
                 Name = "Кандалы",
-                Cost = 30,
+                Cost = 50,
                 Hp = 100
             }
         };

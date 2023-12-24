@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Numerics;
 
 namespace minirpg
 {
@@ -147,49 +146,47 @@ namespace minirpg
         public static void ShowStats(Player player, bool details)
         {
             Console.WriteLine("Данные игрока:");
+            Console.WriteLine($"Имя: {player.Name}");
+            Console.WriteLine($"Уровень: {player.Lvl}");
+            Console.Write("Золото: ");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(player.Gold);
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("Раса: ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine(Person.GetRace(player.Race));
+            Console.ForegroundColor = ConsoleColor.White;
             if (details)
             {
-                Console.WriteLine($"Уровень: {player.Lvl}");
-                Console.Write("Золото: ");
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine(player.Gold);
-                Console.ForegroundColor = ConsoleColor.White;
-
                 Console.Write("Здоровье: ");
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write(player.Hp);
+                Console.Write(player.Hp + player.HpRaceBonus);
                 if (player.Equip.Accessory != null)
                     Console.Write($"(+{player.Equip.Accessory?.Hp})");
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine($"/{(player.Lvl + 1) * 100 + (player.Equip.Accessory?.Hp ?? 0)}");
+                Console.WriteLine($"/{(player.Lvl + 1) * 100 + (player.Equip.Accessory?.Hp ?? 0) + player.HpRaceBonus}");
 
                 Console.Write("Атака: ");
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.Write(player.Atk);
+                Console.Write(player.Atk + player.AtkRaceBonus);
                 if (player.Equip.Weapon != null)
                     Console.Write($"(+{player.Equip.Weapon?.Atk})");
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine($"/{(player.Lvl + 1) * 20 + (player.Equip.Weapon?.Atk ?? 0)}");
+                Console.WriteLine($"/{(player.Lvl + 1) * 20 + (player.Equip.Weapon?.Atk ?? 0) + player.AtkRaceBonus}");
             }
             else
             {
-                Console.WriteLine($"Уровень: {player.Lvl}");
-                Console.Write("Золото: ");
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine(player.Gold);
-                Console.ForegroundColor = ConsoleColor.White;
-
                 Console.Write("Здоровье: ");
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write(player.Hp + (player.Equip.Accessory?.Hp ?? 0));
+                Console.Write(player.Hp + (player.Equip.Accessory?.Hp ?? 0) + player.HpRaceBonus);
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine($"/{(player.Lvl + 1) * 100}");
+                Console.WriteLine($"/{(player.Lvl + 1) * 100 + (player.Equip.Accessory?.Hp ?? 0) + player.HpRaceBonus}");
 
                 Console.Write("Атака: ");
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.Write(player.Atk + (player.Equip.Weapon?.Atk ?? 0));
+                Console.Write(player.Atk + (player.Equip.Weapon?.Atk ?? 0) + player.AtkRaceBonus);
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine($"/{(player.Lvl + 1) * 20}");
+                Console.WriteLine($"/{(player.Lvl + 1) * 20 + (player.Equip.Weapon?.Atk ?? 0) + player.AtkRaceBonus}");
             }
 
             if (player.Equip.Armor != null)
@@ -210,6 +207,11 @@ namespace minirpg
         {
             Console.WriteLine("Данные врага:");
             Console.WriteLine($"Уровень: {enemy.Lvl}");
+
+            Console.Write("Раса: ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine(Person.GetRace(enemy.Race));
+            Console.ForegroundColor = ConsoleColor.White;
 
             Console.Write("Здоровье: ");
             Console.ForegroundColor = ConsoleColor.Red;
