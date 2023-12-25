@@ -61,7 +61,7 @@ namespace minirpg
                 if (playerAtk < enemyAtk - 5) playerAtk = enemyAtk;
                 else playerAtk += 5;
                 if (playerAtk > (player.Lvl + 1) * 20) playerAtk = (player.Lvl + 1) * 20;
-                player.Atk = playerAtk; 
+                player.Atk = playerAtk;
 
                 Console.Write("\nПобеда! Золото: ");
                 Console.ForegroundColor = ConsoleColor.Yellow;
@@ -101,26 +101,45 @@ namespace minirpg
 
         private static bool StartFight(Player player, Enemy enemy)
         {
-            Console.Clear();
-            Print.ShowStats(player);
-            Console.WriteLine();
-            Print.ShowStats(enemy);
+            RedrawStats(player, enemy);
             for (int i = 0; i < 5; i++) Console.WriteLine();
 
             while (true)
             {
+                int zone;
+                while (true)
+                {
+                    Console.Write("Введите номер зоны: ");
+                    if (int.TryParse(Console.ReadLine(), out zone) && zone > 0 && zone < 3) break;
+                }
+
                 Thread.Sleep(500);
-                if (Game.rnd.Next(1, 10) != 1)
+
+                int random = Game.rnd.Next(0, zone == 1 ? 4 : 10);
+                bool miss = random == 0;
+                bool crit = random == 1;
+                if (player.Race == Races.Elf) crit = crit || random == 2;
+
+                if (miss) Console.WriteLine("Вы промахнулись! Урон не засчитан!");
+                else
                 {
                     int rawAtk = player.Atk + player.AtkRaceBonus + (player.Equip.Weapon?.Atk ?? 0) - (enemy.Equip.Armor?.Def ?? 0) + Game.rnd.Next(-5, 5);
-                    int atk = (int)(rawAtk - ((float)rawAtk / 100 * (enemy.Equip.Armor?.Dq ?? 0)));
+                    int atk = (int)((rawAtk - ((float)rawAtk / 100 * (enemy.Equip.Armor?.Dq ?? 0))) * (crit ? 1.5 : 1));
                     if (atk < 0) atk = 0;
                     enemy.Hp -= atk;
                     Console.Write("Вы нанесли противнику ");
                     Console.ForegroundColor = ConsoleColor.Blue;
                     Console.Write(atk);
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine(" урона");
+                    Console.Write(" урона");
+                    if (crit)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.Write(" (критический удар!)");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+                    Console.WriteLine();
+
                     if (enemy.Hp + (enemy.Equip.Accessory?.Hp ?? 0) <= 0)
                     {
                         enemy.Hp = 0;
@@ -128,23 +147,35 @@ namespace minirpg
                         return true;
                     }
                 }
-                else Console.WriteLine("Вы промахнулись! Урон не засчитан!");
 
                 RedrawStats(player, enemy);
 
                 Thread.Sleep(500);
 
-                if (Game.rnd.Next(1, 10) != 1)
+                random = Game.rnd.Next(0, Game.rnd.Next(1, 3) == 1 ? 4 : 10);
+                miss = random == 0;
+                crit = random == 1;
+                if (enemy.Race == Races.Elf) crit = crit || random == 2;
+
+                if (miss) Console.WriteLine("Враг промахнулся! Вам повезло!");
+                else
                 {
                     int rawAtk = enemy.Atk + (enemy.Equip.Weapon?.Atk ?? 0) - (player.Equip.Armor?.Def ?? 0) + Game.rnd.Next(-5, 5);
-                    int atk = (int)(rawAtk - ((float)rawAtk / 100 * (player.Equip.Armor?.Dq ?? 0)));
+                    int atk = (int)((rawAtk - ((float)rawAtk / 100 * (player.Equip.Armor?.Dq ?? 0))) * (crit ? 1.5 : 1));
                     if (atk < 0) atk = 0;
                     player.Hp -= atk;
                     Console.Write("Вам нанесено ");
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.Write(atk);
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine(" урона");
+                    Console.Write(" урона");
+                    if (crit)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write(" (критический удар!)");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+                    Console.WriteLine();
                     if (player.Hp + player.HpRaceBonus + (player.Equip.Accessory?.Hp ?? 0) <= 0)
                     {
                         player.Hp = 0;
@@ -152,7 +183,6 @@ namespace minirpg
                         return false;
                     }
                 }
-                else Console.WriteLine("Враг промахнулся! Вам повезло!");
 
                 RedrawStats(player, enemy);
             }
@@ -162,12 +192,18 @@ namespace minirpg
         {
             var (left, top) = Console.GetCursorPosition();
             Console.SetCursorPosition(0, 0);
-            for (int i = 0; i < 18; i++) Console.WriteLine(new string(' ', Console.WindowWidth));
+            for (int i = 0; i < 20; i++) Console.WriteLine(new string(' ', Console.WindowWidth));
             Console.SetCursorPosition(0, 0);
 
             Print.ShowStats(player);
             Console.WriteLine();
             Print.ShowStats(enemy);
+            Console.SetCursorPosition(Console.WindowWidth - 59, 0);
+            Console.WriteLine("Места, куда можно ударить: ");
+            Console.SetCursorPosition(Console.WindowWidth - 59, 1);
+            Console.WriteLine($"1) Голова (шанс промаха 25%, шанс критического удара {(player.Race == Races.Elf ? 50 : 25)}%)");
+            Console.SetCursorPosition(Console.WindowWidth - 59, 2);
+            Console.WriteLine($"2) Туловище (шанс промаха 10%, шанс критического удара {(player.Race == Races.Elf ? 25 : 10)}%)");
             Console.SetCursorPosition(left, top);
         }
 
